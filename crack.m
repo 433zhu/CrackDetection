@@ -1,4 +1,4 @@
-f = imread('crack_1.jpg');
+f = imread('./img/crack_1.jpg');
 g = rgb2gray(f);
 n = 40;
 [H, W] = size(g);
