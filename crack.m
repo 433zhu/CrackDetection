@@ -21,4 +21,3 @@ wr_cell = num2cell(wr);
 I_corr = cellfun(@gray_corr_2, I, wr_cell, g_avg_cell, 'UniformOutput', false);
 g_corr = cell2mat(I_corr);
 figure(), imshow(g_corr);
-test = double(g_corr) - double(g);
