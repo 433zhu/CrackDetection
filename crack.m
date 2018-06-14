@@ -6,6 +6,10 @@ H = floor(H / n) * n;
 W = floor(W / n) * n;
 g = g(1:H, 1:W);
 figure, imshow(g);
+
+% mask = [1, 2, 1; 2, 4, 2; 1, 2, 1] / 16;
+% g = imfilter(g, mask);
+
 I = mat2cell(g, n * ones(1, H / n), n * ones(1, W / n));
 
 g_r = cellfun(@mean, cellfun(@mean, I, 'UniformOutput', false));
@@ -21,3 +25,11 @@ wr_cell = num2cell(wr);
 I_corr = cellfun(@gray_corr_2, I, wr_cell, g_avg_cell, 'UniformOutput', false);
 g_corr = cell2mat(I_corr);
 figure(), imshow(g_corr);
+
+mask = [1, 2, 1; 2, 4, 2; 1, 2, 1] / 16;
+g_ln = imfilter(g_corr, mask);
+figure(), imshow(g_ln);
+
+level = graythresh(g_corr);
+BW = im2bw(g_corr, level);
+figure(), imshow(BW);
