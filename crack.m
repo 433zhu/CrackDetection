@@ -1,4 +1,4 @@
-f = imread('./img/crack_1.jpg');
+f = imread('./img/crack_7.jpg');
 g = rgb2gray(f);
 n = 40;
 [H, W] = size(g);
@@ -30,6 +30,11 @@ mask = [1, 2, 1; 2, 4, 2; 1, 2, 1] / 16;
 g_ln = imfilter(g_corr, mask);
 figure(), imshow(g_ln);
 
-level = graythresh(g_corr);
-BW = im2bw(g_corr, level);
+level = graythresh(g_ln);
+BW = im2bw(g_ln, level);
 figure(), imshow(BW);
+BW2 = ~BW;
+BW2 = bwareaopen(BW2, 100, 8);
+% BW3 = edge(BW2, 'log');
+figure(), imshow(~BW2);
+% figure(), imshow(BW3);
