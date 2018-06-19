@@ -1,4 +1,4 @@
-f = imread('./img/crack_7.jpg');
+f = imread('./img/crack_2.jpg');
 g = rgb2gray(f);
 n = 40;
 [H, W] = size(g);
@@ -26,15 +26,39 @@ I_corr = cellfun(@gray_corr_2, I, wr_cell, g_avg_cell, 'UniformOutput', false);
 g_corr = cell2mat(I_corr);
 figure(), imshow(g_corr);
 
+% multi-stucture median filtering
+b1 = [0, 0, 0; 1, 1, 1; 0, 0, 0];
+g_corr_1 = ordfilt2(g, 2, b1);
+g_corr_2 = ordfilt2(g_corr_1, 2, b1');
+g_corr_3 = ordfilt2(g_corr_2, 2, eye(3)');
+g_corr_4 = ordfilt2(g_corr_3, 2, eye(3));
+
+% imporved average filtering
 mask = [1, 2, 1; 2, 4, 2; 1, 2, 1] / 16;
-g_ln = imfilter(g_corr, mask);
+g_ln = imfilter(g_corr_4, mask);
 figure(), imshow(g_ln);
 
-level = graythresh(g_ln);
-BW = im2bw(g_ln, level);
+% erobe and dilate
+% b_s = [0, 0, 0, 1; 0, 1, 1, 0; 1, 0, 0, 0];
+b_s = [0 0 1 0 0; 0 1 1 1 0; 1 1 1 1 1; 0 1 1 1 0; 0 0 1 0 0];
+g_dilate = imdilate(g, b_s);
+g_erode = imerode(g, b_s);
+g_c = g_dilate - g_erode;
+figure(), imshow(g_c);
+g_c_2 = imclose(g_c, b_s);
+figure(), imshow(g_c_2);
+
+% threshold
+level = graythresh(g_c_2);
+BW = im2bw(g_c_2, level);
 figure(), imshow(BW);
-BW2 = ~BW;
-BW2 = bwareaopen(BW2, 100, 8);
+
+% edge
+BW2 = edge(g_c_2, 'log');
+figure(), imshow(BW2);
+
+% BW2 = ~BW;
+% BW2 = bwareaopen(BW2, 100, 8);
 % BW3 = edge(BW2, 'log');
-figure(), imshow(~BW2);
-% figure(), imshow(BW3);
+% figure(), imshow(~BW2);
+% % figure(), imshow(BW3);
