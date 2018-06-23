@@ -43,10 +43,6 @@ figure(), imshow(g_corr_4), title('中值滤波');
 % figure(), imshow(g_ln);
 
 se = strel('disk', 5);
-% se2 = strel('disk', 5);
-% g_open = imopen(g_corr_4, se);
-% g_top = imsubtract(g_corr_4, go);
-% g_close = imclose(g_corr_4, se2);
 g_bot = imbothat(g_corr_4, se);
 g_add = imadd(g_corr_4, imtophat(g_corr_4, se));
 g2 = imsubtract(imadd(g_corr_4, imtophat(g_corr_4, se)), g_bot);%增强对比度
