@@ -27,6 +27,7 @@ wr_cell = num2cell(wr);
 I_corr = cellfun(@gray_corr_2, I, wr_cell, g_avg_cell, 'UniformOutput', false);
 g_corr = cell2mat(I_corr);
 figure(), imshow(g_corr), title('预处理后的图像');
+% g_corr = g;
 
 % multi-stucture median filtering
 b1 = [0, 0, 0; 1, 1, 1; 0, 0, 0];
@@ -41,34 +42,14 @@ figure(), imshow(g_corr_4), title('中值滤波');
 % g_ln = imfilter(g_corr_4, mask);
 % figure(), imshow(g_ln);
 
-% erobe and dilate
-% b_s = [0, 0, 0, 1; 0, 1, 1, 0; 1, 0, 0, 0];
-% b_s = [0 0 1 0 0; 0 1 1 1 0; 1 1 1 1 1; 0 1 1 1 0; 0 0 1 0 0];
-% g_dilate = imdilate(g_corr, b_s);
-% g_erode = imerode(g, b_s);
-% g_c = g_dilate - g_erode;
-% figure(), imshow(g_c);
-% g_c_2 = imclose(g_c, b_s);
-% figure(), imshow(g_c_2);
-
-% threshold
-% level = graythresh(g_c_2);
-% BW = im2bw(g_c_2, level);
-% figure(), imshow(BW);
-
 se = strel('disk', 5);
-se2 = strel('disk', 5);
-go = imopen(g_corr_4, se);
-g1 = imsubtract(g_corr_4, go);
-gc = imclose(g_corr_4, se2);
-gb = imbothat(g_corr_4, se2);
-g_add = imadd(g_corr_4, imtophat(g_corr_4, se2));
-g2 = imsubtract(imadd(g_corr_4, imtophat(g_corr_4, se2)), gb);%增强对比度
-figure();
-subplot(221), imshow(go), title('开');
-subplot(222), imshow(g1), title('tophat');
-subplot(223), imshow(gc),title('闭操作');
-subplot(224), imshow(gb),title('bothat');
+% se2 = strel('disk', 5);
+% g_open = imopen(g_corr_4, se);
+% g_top = imsubtract(g_corr_4, go);
+% g_close = imclose(g_corr_4, se2);
+g_bot = imbothat(g_corr_4, se);
+g_add = imadd(g_corr_4, imtophat(g_corr_4, se));
+g2 = imsubtract(imadd(g_corr_4, imtophat(g_corr_4, se)), g_bot);%增强对比度
 figure(), imshow(g2), title('对比度增强');
 % edge
 BW2 = edge(g2, 'canny', 0.3);
@@ -77,7 +58,7 @@ figure(), imshow(BW2), title('canny边缘检测');
 
 se_f = strel('diamond', 4);
 crack = imclose(BW2, se_f);
-figure(), imshow(crack), title('闭操作');
+figure(), imshow(crack), title('裂缝');
 
 final = f;
 crack = uint8(crack);
