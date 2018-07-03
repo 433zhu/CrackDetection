@@ -1,4 +1,5 @@
 function I = gray_corr(x, l, avg)
+    % correct the gray level
     gray_table = zeros(256, 2);
     for i = 0 : 255
         gray_table(i+1, 1) = i;
